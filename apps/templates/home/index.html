@@ -19,11 +19,12 @@
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Welcome Back</p>
                     <h4 class="font-weight-bolder">Cycle Connect Team</h4>
-                    <p class="mb-7"> Total Client Tracked:  <br>
-                        Cumulative Track Time:  <br>
-                        Cumulative Track Distance: <br>
-                        Number of Key Locations Identified:
+                    <p class="mb-4"> Total Client Tracked:      {{  meta_data.total_clients }} <br>
+                        Cumulative Track Time:  {{  meta_data.total_time }}<br>
+                        Cumulative Track Distance: {{  meta_data.total_distance }}<br>
+                        Number of Key Locations Identified:  {{  meta_data.total_locations }}<br>
                     </p>
+                      <a href="/refresh" class="mb-4 text-decoration-underline">Refresh Statistics</a>
                   </div>
                 </div>
               </div>

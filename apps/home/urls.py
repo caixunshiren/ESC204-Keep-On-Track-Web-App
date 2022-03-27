@@ -13,7 +13,9 @@ urlpatterns = [
     # The home page
     path('', views.index, name='home'),
     path('dashboard/', views.index, name='home'),
-    path('data/', views.data, name='data')
+    path('data/', views.data, name='data'),
+    path('delete/<int:id>/', views.track_delete, name='delete'),
+    path('refresh/', views.refresh, name='refresh'),
     # Matches any html file
     # re_path(r'^.*\.*', views.pages, name='pages'),
 
