@@ -16,6 +16,7 @@ urlpatterns = [
     path('data/', views.data, name='data'),
     path('delete/<int:id>/', views.track_delete, name='delete'),
     path('refresh/', views.refresh, name='refresh'),
+    path('export/', views.export, name='export')
     # Matches any html file
     # re_path(r'^.*\.*', views.pages, name='pages'),
 

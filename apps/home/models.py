@@ -22,6 +22,16 @@ class MetaData(models.Model):
         # self.total_locations = Track.objects.count()
         self.save()
 
+    def aggregate_coords(self):
+        pass
+
+    def file_loader(self, dir):
+        pass
+
+    def aggregated_export(self):
+        print("aggregated_export")
+        pass
+
     def display(self):
         return {
             'total_clients': "    "+str(self.total_clients),

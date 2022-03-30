@@ -89,6 +89,20 @@ def refresh(request):
     else:
         [meta.refresh() for meta in MetaData.objects.iterator()]
     return redirect('home')
+
+
+def export(request):
+    from .models import MetaData
+    if not MetaData.objects.exists():
+        meta_data = MetaData()
+        meta_data.refresh()
+        meta_data.save()
+    else:
+        [meta.refresh() for meta in MetaData.objects.iterator()]
+    meta = [meta for meta in MetaData.objects.iterator()][0]
+    meta.aggregated_export()
+    return redirect('data')
+
 # def pages(request):
 #     context = {}
 #     # All resource paths end in .html.
