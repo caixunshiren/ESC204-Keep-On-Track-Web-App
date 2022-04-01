@@ -9,6 +9,9 @@ import pandas as pd
 import numpy as np
 import haversine as hs
 from haversine import Unit
+from django.core.files.base import File
+from zipfile import ZipFile
+
 
 # Metadata
 class MetaData(models.Model):
@@ -17,6 +20,7 @@ class MetaData(models.Model):
     total_distance = models.FloatField(blank=True, default=0.0)
     total_locations = models.FloatField(blank=True, default=0.0)
     total_time_saved = models.FloatField(blank=True, default=0.0)
+    zip_file = models.FileField(upload_to='processed/', blank=True)
 
     def refresh(self):
         self.total_clients = Track.objects.count()
@@ -34,15 +38,16 @@ class MetaData(models.Model):
         # self.total_locations = Track.objects.count()
         self.save()
 
-    def aggregate_coords(self):
-        pass
-
-    def file_loader(self, dir):
-        pass
-
-    def aggregated_export(self):
+    def create_zip(self):
+        with ZipFile('uploadfiles/temp.zip', 'w') as zipObj:
+            # Add multiple files to the zip
+            for track in Track.objects.iterator():
+                zipObj.write(track.processed_csv.path)
+        with open('uploadfiles/temp.zip', 'rb') as f:
+            self.zip_file.save("all_tracks", File(f))
+        self.save()
         print("aggregated_export")
-        pass
+
 
     def display(self):
         return {
@@ -63,6 +68,7 @@ class Track(models.Model):
     total_distance = models.FloatField(default=0, blank=True)
     average_speed = models.FloatField(default=0, blank=True)
     total_time_saved = models.FloatField(default=0, blank=True)
+    processed_csv = models.FileField(upload_to='processed/', blank=True)
 
     def display_track(self):
         ret = {
@@ -73,7 +79,8 @@ class Track(models.Model):
             'total_hours': str(round(self.total_hours, 3)),
             'total_distance': str(round(self.total_distance, 3)),
             'average_speed': str(round(self.average_speed, 2)),
-            'total_time_saved': str(round(self.total_time_saved, 2))
+            'total_time_saved': str(round(self.total_time_saved, 2)),
+            'processed_url': self.processed_csv.url
         }
         return ret
 
@@ -91,6 +98,9 @@ class Track(models.Model):
             avg_speed = 0
             # check movement
             data['moving'] = True
+            data['speed (km/h)'] = np.nan
+            data['distance (m)'] = np.nan
+            data['time delta (s)'] = np.nan
             for i in data.index:
                 if i == 0:
                     continue
@@ -109,13 +119,19 @@ class Track(models.Model):
                 total_time += delta_t
                 total_distance += dis
                 speed.append((dis/delta_t)*3.6)  # convert to km/h
+                data.at[i, 'distance (m)'] = dis
+                data.at[i, 'speed (km/h)'] = (dis/delta_t)*3.6
+                data.at[i, 'time delta (s)'] = delta_t
             avg_speed = sum(speed)/len(speed)
             self.total_distance = total_distance/1000  # convert to km
             self.total_hours = total_time/3600  # convert to hours
             self.average_speed = avg_speed
             self.total_time_saved += (self.average_speed / 5) * self.total_hours
             # print("success", total_distance, total_time/3600, avg_speed)
-            print(data)
-
+            # save data
+            data.to_csv('uploadfiles/temp.csv', index=False)
+            with open('uploadfiles/temp.csv') as f:
+                self.processed_csv.save(f"{self.id}_processed", File(f))
+            self.save()
         except:
             print("failed computing meta data for", self.description)

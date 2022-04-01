@@ -128,8 +128,8 @@ def export(request):
     else:
         [meta.refresh() for meta in MetaData.objects.iterator()]
     meta = [meta for meta in MetaData.objects.iterator()][0]
-    meta.aggregated_export()
-    return redirect('data')
+    meta.create_zip()
+    return redirect(meta.zip_file.url)
 
 # def pages(request):
 #     context = {}
