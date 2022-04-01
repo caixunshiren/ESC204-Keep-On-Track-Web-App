@@ -34,7 +34,7 @@ def draw_paths(m):
         html = f"""
             <h4> Tracker ID {str(track.id)}</h4>
             <p><code>This marks the start position ...</code></p>
-            <p>
+            <p><code>{track.description}</code></p>
             <p><b>Total Biking Hours:</b>   {str(round(track.total_hours, 3))} hours</p>
             <p><b>Total Biking Distance:</b>    {str(round(track.total_distance, 3))} km</p>
             <p><b>Average Speed:</b>    {str(round(track.average_speed, 2))} km/h</p>

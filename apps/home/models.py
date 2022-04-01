@@ -115,6 +115,7 @@ class Track(models.Model):
             self.average_speed = avg_speed
             self.total_time_saved += (self.average_speed / 5) * self.total_hours
             # print("success", total_distance, total_time/3600, avg_speed)
+            print(data)
 
         except:
             print("failed computing meta data for", self.description)
