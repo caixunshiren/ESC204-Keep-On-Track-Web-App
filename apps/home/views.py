@@ -15,7 +15,8 @@ import os
 
 
 # configs:
-DEFAULT_CENTER = [2.770433, 32.442843]
+DEFAULT_CENTER = [43.661673, -79.395197]  # [2.770433, 32.442843]
+ZOOM_START = 14  # 9
 KEY_LOCATIONS = {
     "Guru": [2.770433, 32.299843],
     "Pader": [2.881608, 33.085398],
@@ -25,10 +26,36 @@ KEY_LOCATIONS = {
 }
 
 
+def draw_paths(m):
+    from .models import Track
+    for track in Track.objects.iterator():
+        data = track.load_file()
+        loc = data[['latitude', 'longitude']].values.tolist()
+        html = f"""
+            <h4> Tracker ID {str(track.id)}</h4>
+            <p><code>This marks the start position ...</code></p>
+            <p>
+            <p><b>Total Biking Hours:</b>   {str(round(track.total_hours, 3))} hours</p>
+            <p><b>Total Biking Distance:</b>    {str(round(track.total_distance, 3))} km</p>
+            <p><b>Average Speed:</b>    {str(round(track.average_speed, 2))} km/h</p>
+            <p><b>Estimated Hours Saved:</b>    {str(round(track.total_time_saved, 2))} hours</p>
+            """
+        iframe = folium.Html(html, script=True)
+        popup = folium.Popup(iframe, max_width=2650)
+
+        folium.PolyLine(loc,
+                        color='orange',
+                        weight=5,
+                        opacity=0.8).add_to(m)
+        folium.Marker(location=loc[0], popup=popup, icon=folium.Icon(color='orange', icon_color='white')).add_to(m)
+    return m
+
+
 def map_control(m):
     for name in KEY_LOCATIONS.keys():
         folium.Marker(location=KEY_LOCATIONS[name], popup=name).add_to(m)
         folium.Circle(location=KEY_LOCATIONS[name], radius=10000, fill_color='gray', color='opaque').add_to(m)
+    m = draw_paths(m)
     return m
 
 
@@ -37,8 +64,9 @@ def index(request):
         form = TrackForm(request.POST, request.FILES)
         # print("debug post")
         if form.is_valid():
-            form.save()
-            # print("save")
+            track = form.save()
+            track.compute_meta_data()
+            track.save()
             return redirect('home')
     else:
         form = TrackForm()
@@ -52,7 +80,7 @@ def index(request):
         meta_data = [meta.display() for meta in MetaData.objects.iterator()][0]
 
     # folium
-    m = folium.Map(location=DEFAULT_CENTER, zoom_start=9)
+    m = folium.Map(location=DEFAULT_CENTER, zoom_start=ZOOM_START)
     m = map_control(m)
     folium.LayerControl().add_to(m)
     ## exporting

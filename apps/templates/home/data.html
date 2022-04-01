@@ -13,13 +13,13 @@
         <div class="card mb-4">
 
           <div class="row">
-          <div class="col-10">
+          <div class="col-9">
           <div class="card-header pb-0">
             <h6>Track Records</h6>
           </div>
           </div>
-          <div class="col-2">
-          <a href="/export" type="submit" name="export" class="btn bg-gradient-info w-75 mt-4 mb-0">Export Data</a>
+          <div class="col-3">
+          <a href="/export" type="submit" name="export" class="btn bg-gradient-info w-75 mt-4 mb-0">Export All Data</a>
           </div>
           </div>
 
@@ -29,9 +29,14 @@
                 <thead>
                   <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Uploaded at</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total (Biking) Hours</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total (Biking) Distance (km)</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Average Speed (km/h)</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total Hours Saved</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
                     <th class="text-secondary opacity-7"></th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -44,17 +49,34 @@
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <a href="{{  track.file_url }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        view
-                      </a>
-                    </td>
                     <td class="align-middle text-center">
                       <span class="text-secondary text-xs font-weight-bold">{{ track.timestamp }}</span>
                     </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ track.total_hours }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ track.total_distance }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ track.average_speed }}</span>
+                    </td>
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{ track.total_time_saved }}</span>
+                    </td>
+                    <td>
+                      <a href="{{  track.file_url }}" class="text-secondary font-weight-bold text-xs me-4" data-toggle="tooltip" data-original-title="Edit user">
+                        view
+                      </a>
+                    </td>
                     <td class="align-middle">
-                      <a href="/delete/{{track.id}}" class="text-secondary font-weight-bold text-xs text-danger" data-toggle="tooltip" data-original-title="Edit user">
+                      <a href="/delete/{{track.id}}" class="text-secondary font-weight-bold text-xs text-danger me-4" data-toggle="tooltip" data-original-title="Edit user">
                         delete
+                      </a>
+                    </td>
+                    <td>
+                      <a href="{{  track.file_url }}" class="text-secondary font-weight-bold text-xs me-5 text-success" data-toggle="tooltip" data-original-title="Edit user">
+                        export
                       </a>
                     </td>
                   </tr>
